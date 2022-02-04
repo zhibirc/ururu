@@ -1,0 +1,6 @@
+.*
+/node_modules
+/src
+/test
+webpack.config.js
+package-lock.json
