@@ -1,12 +1,11 @@
 # ururu
 
-![Maintenance](https://img.shields.io/maintenance/yes/2022?color=brightgreen&style=flat-square)
-![Lines of code](https://img.shields.io/tokei/lines/github/zhibirc/ururu?color=yellow&style=flat-square)
+![Maintenance](https://img.shields.io/maintenance/yes/2023?color=brightgreen&style=flat-square)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-magenta.svg)]()
 
-**No URURU, just LRU**
+**No URURU, just LRU (and friends)**
 
-Yet another LRU cache implementation. But why? Yeah, there are a few reasons for that:
+Yet another cache implementations. But why? Yeah, there are a few reasons for that:
 
 1. Simplicity in implementation means better _maintainability_.
 2. Simplicity in interface means better _learnability_ (see "ISO/IEC 9126 Software engineering — Product quality").

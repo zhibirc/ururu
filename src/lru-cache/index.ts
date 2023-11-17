@@ -1,14 +1,23 @@
-// helpers
-import { validateSize } from './helpers/validateSize.js';
-import { getTimestamp } from './helpers/getTimestamp.js';
+const getTimestamp = () => Date.now();
 
-class LRU {
+type TConfigOptions = {
+    size?: number;
+    // try to maximize performance through specialization
+    hasStructKeys?: boolean; 
+};
+
+class LruCache {
     #store
     #accessMap
     #sizeLimit
 
-    constructor ( size ) {
-        validateSize(size);
+    // @todo
+    constructor ( options: TConfigOptions ) {
+        const { size, hasStructKeys } = options;
+
+        if ( !Number.isInteger(size) ) {
+            throw new Error('Invalid LRU cache size: expect integer number.');
+        }
 
         // struct for cache itself
         this.#store = new Map();
@@ -17,7 +26,7 @@ class LRU {
         this.#sizeLimit = size;
     }
 
-    getValue ( key ) {
+    getValue ( key: any ) {
         if ( this.#store.has(key) ) {
             // update access time
             this.#accessMap.set(key, getTimestamp());
@@ -26,7 +35,7 @@ class LRU {
         }
     }
 
-    setValue ( key, value ) {
+    setValue ( key: any, value: any ) {
         if ( this.#store.has(key) ) {
             return;
         }
@@ -56,8 +65,10 @@ class LRU {
         this.#store.set(key, value);
     }
 
-    setSize ( size ) {
-        validateSize(size);
+    setSize ( size: number ) {
+        if ( !Number.isInteger(size) ) {
+            throw new Error('Invalid LRU cache size: expect integer number.');
+        }
 
         this.#sizeLimit = size;
     }
@@ -67,5 +78,3 @@ class LRU {
         this.#accessMap.clear();
     }
 }
-
-export default LRU;
