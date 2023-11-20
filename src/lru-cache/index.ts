@@ -1,49 +1,62 @@
+import { ILruCache, TConfigOptions } from './types.js';
+
 const getTimestamp = () => Date.now();
 
-type TConfigOptions = {
-    size?: number;
-    // try to maximize performance through specialization
-    hasStructKeys?: boolean; 
-};
+class LruCache implements ILruCache {
+    #capacity: number;
+    #store;
+    #accessMap;
 
-class LruCache {
-    #store
-    #accessMap
-    #sizeLimit
-
-    // @todo
     constructor ( options: TConfigOptions ) {
-        const { size, hasStructKeys } = options;
+        const { capacity, checkLowMemory } = options;
+        let checkLowMemoryTimer;
 
-        if ( !Number.isInteger(size) ) {
-            throw new Error('Invalid LRU cache size: expect integer number.');
+        if (typeof capacity === 'number' && (!Number.isInteger(capacity) || capacity <= 0)) {
+            throw new Error('Invalid value for LRU cache capacity: positive integer expected');
         }
 
-        // struct for cache itself
+        this.#capacity = capacity as number;
+
+        if (checkLowMemory) {
+            checkLowMemoryTimer = setInterval(() => {
+                // @todo
+            }, 5000);
+            checkLowMemoryTimer.unref?.();
+        }
+
         this.#store = new Map();
         // struct for tracking of access to cache items
         this.#accessMap = new Map();
-        this.#sizeLimit = size;
     }
 
-    getValue ( key: any ) {
-        if ( this.#store.has(key) ) {
+    get size() {
+        return this.#store.size;
+    }
+
+    set capacity (value: number) {
+        if (!Number.isInteger(value) || value <= 0) {
+            throw new Error('Invalid value for LRU cache capacity: positive integer expected');
+        }
+
+        this.#capacity = value;
+    }
+
+    read (key: any) {
+        if (this.#store.has(key)) {
             // update access time
             this.#accessMap.set(key, getTimestamp());
 
             return this.#store.get(key);
         }
+
+        return null;
     }
 
-    setValue ( key: any, value: any ) {
-        if ( this.#store.has(key) ) {
-            return;
-        }
-
+    store (key: any, value: any) {
         const timestamp = getTimestamp();
 
         // check if cache size limit is reached
-        if ( this.#store.size === this.#sizeLimit ) {
+        if ( this.#store.size === this.#capacity ) {
             // first, get item with the lowest priority (oldest based on timestamp)
             const min = {
                 key: null,
@@ -65,12 +78,12 @@ class LruCache {
         this.#store.set(key, value);
     }
 
-    setSize ( size: number ) {
-        if ( !Number.isInteger(size) ) {
-            throw new Error('Invalid LRU cache size: expect integer number.');
-        }
+    has (key: any) {
+        return this.#store.has(key);
+    }
 
-        this.#sizeLimit = size;
+    remove(key: any) {
+        this.#store.delete(key);
     }
 
     clear () {
@@ -78,3 +91,6 @@ class LruCache {
         this.#accessMap.clear();
     }
 }
+
+
+export default LruCache;
