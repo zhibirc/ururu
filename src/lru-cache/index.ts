@@ -11,17 +11,16 @@ class LruCache implements ILruCache {
         const { capacity, checkLowMemory } = options;
         let checkLowMemoryTimer;
 
-        if (typeof capacity === 'number' && (!Number.isInteger(capacity) || capacity <= 0)) {
-            throw new Error('Invalid value for LRU cache capacity: positive integer expected');
-        }
+        if (!Number.isInteger(capacity) || capacity <= 0) throw new Error('invalid "capacity": positive integer expected');
+        if (typeof checkLowMemory !== 'boolean') throw new Error('option "checkLowMemory" must be boolean if provided');
 
-        this.#capacity = capacity as number;
+        this.#capacity = capacity;
 
         if (checkLowMemory) {
             checkLowMemoryTimer = setInterval(() => {
                 // @todo
             }, 5000);
-            checkLowMemoryTimer.unref?.();
+            // checkLowMemoryTimer.unref?.();
         }
 
         this.#store = new Map();
@@ -34,9 +33,7 @@ class LruCache implements ILruCache {
     }
 
     set capacity (value: number) {
-        if (!Number.isInteger(value) || value <= 0) {
-            throw new Error('Invalid value for LRU cache capacity: positive integer expected');
-        }
+        if (!Number.isInteger(value) || value <= 0) throw new Error('invalid "capacity": positive integer expected');
 
         this.#capacity = value;
     }
