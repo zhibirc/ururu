@@ -2,7 +2,7 @@ import { IFifoCache, TConfigOptions, TNode } from './types.js';
 
 const Node = (data: {key: any, value: any}, next?: TNode) => ({data, next});
 
-class LruCache implements IFifoCache {
+class FifoCache implements IFifoCache {
     #capacity: number;
     #store;
     #map: Map<any, TNode>;
@@ -78,4 +78,4 @@ class LruCache implements IFifoCache {
 }
 
 
-export default LruCache;
+export default FifoCache;
