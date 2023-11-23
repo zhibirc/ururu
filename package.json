@@ -5,9 +5,7 @@
     "author": {
         "name": "Yaroslav Surilov"
     },
-    "scripts": {
-        "test": "mocha"
-    },
+    "scripts": {},
     "type": "module",
     "repository": {
         "type": "git",
@@ -29,6 +27,7 @@
     },
     "homepage": "https://github.com/zhibirc/ururu#readme",
     "devDependencies": {
+        "@types/node": "^20.9.5",
         "typescript": "^5.2.2"
     }
 }
