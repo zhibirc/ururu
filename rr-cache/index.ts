@@ -31,6 +31,11 @@ class RRCache implements IRRCache {
         this.#capacity = value;
     }
 
+    /**
+     * Read value stored in cache by assosiated key.
+     * @param {*} key - cache record's key
+     * @return {*|null} record's value retrieved by key or null if record is absent
+     */
     read (key: any) {
         if (this.#store.has(key)) {
             return this.#store.get(key).value;
@@ -57,10 +62,20 @@ class RRCache implements IRRCache {
         this.#store.set(key, {keyIndex, value});
     }
 
+    /**
+     * Check if record by given key exists in cache.
+     * @param {*} key - cache record's key
+     * @return {boolean} return true if record is in the cache
+     */
     has (key: any) {
         return this.#store.has(key);
     }
 
+    /**
+     * Remove an item from the cache.
+     * @param {*} key - cache record's key
+     * @return {void}
+     */
     remove (key: any) {
         if (this.#store.has(key)) {
             const keyIndex = this.#store.get(key).keyIndex;
@@ -70,6 +85,10 @@ class RRCache implements IRRCache {
         }
     }
 
+    /**
+     * Remove all items from the cache.
+     * @return {void}
+     */
     clear () {
         this.#keys.length = this.#freeSlots.length = 0;
         this.#keys.length = this.#capacity;
