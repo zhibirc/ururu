@@ -17,8 +17,11 @@ class RRCache implements IRRCache {
         this.#store = new Map();
     }
 
-    get size() {
-        return this.#store.size;
+    get stats() {
+        return {
+            size: this.#store.size,
+            capacity: this.#capacity
+        };
     }
 
     set capacity (value: number) {
@@ -44,7 +47,7 @@ class RRCache implements IRRCache {
         return null;
     }
 
-    store (key: any, value: any) {
+    add (key: any, value: any) {
         let keyIndex: number;
 
         // check if cache capacity limit is reached
