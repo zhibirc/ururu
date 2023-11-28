@@ -5,7 +5,9 @@
     "author": {
         "name": "Yaroslav Surilov"
     },
-    "scripts": {},
+    "scripts": {
+        "compile": "tsc"
+    },
     "type": "module",
     "repository": {
         "type": "git",
