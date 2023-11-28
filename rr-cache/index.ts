@@ -2,6 +2,7 @@ import { IRRCache, TConfigOptions } from './types.js';
 
 class RRCache implements IRRCache {
     #capacity: number;
+    #locked: boolean;
     #keys: Array<any>;
     #freeSlots: Array<number>;
     #store;
@@ -12,6 +13,7 @@ class RRCache implements IRRCache {
         if (!Number.isInteger(capacity) || capacity <= 0) throw new Error('invalid "capacity": positive integer expected');
 
         this.#capacity = capacity;
+        this.#locked = false;
         this.#keys = new Array(capacity);
         this.#freeSlots = [];
         this.#store = new Map();
@@ -20,18 +22,13 @@ class RRCache implements IRRCache {
     get stats() {
         return {
             size: this.#store.size,
-            capacity: this.#capacity
+            capacity: this.#capacity,
+            locked: this.#locked
         };
     }
 
-    set capacity (value: number) {
-        if (!Number.isInteger(value) || value <= 0) throw new Error('invalid "capacity": positive integer expected');
-
-        if (value < this.#capacity) {
-            // @todo: implement
-        }
-
-        this.#capacity = value;
+    set locked (state: boolean) {
+        this.#locked = state;
     }
 
     /**
@@ -48,6 +45,8 @@ class RRCache implements IRRCache {
     }
 
     add (key: any, value: any) {
+        if (this.#locked) return;
+
         let keyIndex: number;
 
         // check if cache capacity limit is reached

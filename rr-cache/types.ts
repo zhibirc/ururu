@@ -1,16 +1,18 @@
 type TStats = {
-    // get number of cache entries
+    // represent number of cache entries
     size: number;
-    // get current value of cache capacity
+    // represent value of cache capacity
     capacity: number;
+    // represent if cache is locked currently
+    locked: boolean;
     // @todo: may contain other props like cache misses, etc.
 };
 
 interface IRRCache {
     // get cache statistics
     get stats(): TStats;
-    // set new capacity value
-    set capacity(value: number);
+    // set lock state, if locked cache isn't growing
+    set locked(state: boolean);
     // read value from cache by its key
     read: (key: any) => any;
     // add value to cache by corresponding key
