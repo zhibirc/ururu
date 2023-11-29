@@ -6,8 +6,7 @@ interface ILruCache {
     has: (key: any) => boolean;
     remove: (key: any) => void;
     clear: () => void;
-};
-
+}
 type TConfigOptions = {
     /**
      * Capacity means how many items can be stored at the same time in cache.
@@ -23,9 +22,15 @@ type TConfigOptions = {
      */
     checkLowMemory?: boolean;
 };
-
-
-export {
-    ILruCache,
-    TConfigOptions
-};
+declare class LruCache implements ILruCache {
+    #private;
+    constructor(options: TConfigOptions);
+    get size(): number;
+    set capacity(value: number);
+    read(key: any): any;
+    store(key: any, value: any): void;
+    has(key: any): boolean;
+    remove(key: any): void;
+    clear(): void;
+}
+export default LruCache;

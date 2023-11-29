@@ -5,8 +5,7 @@ interface IFifoCache {
     store: (key: any, value: any) => void;
     has: (key: any) => boolean;
     clear: () => void;
-};
-
+}
 type TConfigOptions = {
     /**
      * Capacity means how many items can be stored at the same time in cache.
@@ -15,18 +14,14 @@ type TConfigOptions = {
      */
     capacity: number;
 };
-
-type TNode = {
-    data: {
-        key: any,
-        value: any
-    };
-    next?: TNode;
-};
-
-
-export {
-    IFifoCache,
-    TConfigOptions,
-    TNode
-};
+declare class FifoCache implements IFifoCache {
+    #private;
+    constructor(options: TConfigOptions);
+    get size(): number;
+    set capacity(value: number);
+    read(key: any): any;
+    store(key: any, value: any): void;
+    has(key: any): boolean;
+    clear(): void;
+}
+export default FifoCache;

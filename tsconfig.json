@@ -1,23 +1,19 @@
 {
   "compilerOptions": {
-    "rootDir": ".",
-    "outDir": "build",
-    "target": "es2017",
+    "target": "es2022",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true
+    "alwaysStrict": true,
+    "skipLibCheck": true,
+    "declaration": true
   },
   "include": [
-    "fifo-cache/src/*",
-    "lfu-cache/src/*",
-    "lru-cache/src/*",
-    "rr-cache/src/*",
-    "slru-cache/src/*",
-    "ttl-cache-v1/src/*",
-    "ttl-cache-v2/src/*",
-    "spec.ts"
+    "*/index.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }
