@@ -5,6 +5,8 @@ type TStats = {
     capacity: number;
     // represent if cache is locked currently
     locked: boolean;
+    // measures how effective a cache is at fulfilling requests
+    hitRatio: number;
     // @todo: may contain other props like cache misses, etc.
 }
 
@@ -12,7 +14,7 @@ interface IRRCache {
     // get cache statistics
     get stats(): TStats;
     // set lock state, if locked cache isn't growing
-    set locked(state: boolean);
+    set lock(state: boolean);
     // read value from cache by its key
     read: (key: any) => any;
     // add value to cache by corresponding key
@@ -35,6 +37,8 @@ type TConfigOptions = {
 }
 
 class RRCache implements IRRCache {
+    #hits: number;
+    #misses: number;
     #capacity: number;
     #locked: boolean;
     #keys: Array<any>;
@@ -46,6 +50,8 @@ class RRCache implements IRRCache {
 
         if (!Number.isInteger(capacity) || capacity <= 0) throw new Error('invalid "capacity": positive integer expected');
 
+        this.#hits = 0;
+        this.#misses = 0;
         this.#capacity = capacity;
         this.#locked = false;
         this.#keys = new Array(capacity);
@@ -57,11 +63,12 @@ class RRCache implements IRRCache {
         return {
             size: this.#store.size,
             capacity: this.#capacity,
-            locked: this.#locked
+            locked: this.#locked,
+            hitRatio: this.#hits / (this.#hits + this.#misses)
         };
     }
 
-    set locked (state: boolean) {
+    set lock (state: boolean) {
         this.#locked = state;
     }
 
@@ -72,9 +79,11 @@ class RRCache implements IRRCache {
      */
     read (key: any) {
         if (this.#store.has(key)) {
+            this.#hits += 1;
             return this.#store.get(key).value;
         }
 
+        this.#misses += 1;
         return null;
     }
 

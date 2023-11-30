@@ -1,4 +1,6 @@
 class RRCache {
+    #hits;
+    #misses;
     #capacity;
     #locked;
     #keys;
@@ -8,6 +10,8 @@ class RRCache {
         const { capacity } = options;
         if (!Number.isInteger(capacity) || capacity <= 0)
             throw new Error('invalid "capacity": positive integer expected');
+        this.#hits = 0;
+        this.#misses = 0;
         this.#capacity = capacity;
         this.#locked = false;
         this.#keys = new Array(capacity);
@@ -18,10 +22,11 @@ class RRCache {
         return {
             size: this.#store.size,
             capacity: this.#capacity,
-            locked: this.#locked
+            locked: this.#locked,
+            hitRatio: this.#hits / (this.#hits + this.#misses)
         };
     }
-    set locked(state) {
+    set lock(state) {
         this.#locked = state;
     }
     /**
@@ -31,8 +36,10 @@ class RRCache {
      */
     read(key) {
         if (this.#store.has(key)) {
+            this.#hits += 1;
             return this.#store.get(key).value;
         }
+        this.#misses += 1;
         return null;
     }
     add(key, value) {

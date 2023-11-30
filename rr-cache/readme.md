@@ -7,7 +7,7 @@
 | Operation  | Time complexity | Space complexity | Description                               |
 |------------|-----------------|------------------|-------------------------------------------|
 | `stats`    | $O(1)$          | $O(1)$           | Get cache statistics.                     |
-| `locked`   | $O(1)$          | $O(1)$           | Set lock state.                           |
+| `lock`     | $O(1)$          | $O(1)$           | Set lock state.                           |
 | `read`     | $O(1)$          | $O(1)$           | Read value by its key.                    |
 | `add`      | $O(1)$          | $O(1)$           | Add value by corresponding key.           |
 | `has`      | $O(1)$          | $O(1)$           | Check if there is a value by given key.   |

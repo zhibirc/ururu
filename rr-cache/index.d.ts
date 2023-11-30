@@ -2,10 +2,11 @@ type TStats = {
     size: number;
     capacity: number;
     locked: boolean;
+    hitRatio: number;
 };
 interface IRRCache {
     get stats(): TStats;
-    set locked(state: boolean);
+    set lock(state: boolean);
     read: (key: any) => any;
     add: (key: any, value: any) => void;
     has: (key: any) => boolean;
@@ -27,8 +28,9 @@ declare class RRCache implements IRRCache {
         size: number;
         capacity: number;
         locked: boolean;
+        hitRatio: number;
     };
-    set locked(state: boolean);
+    set lock(state: boolean);
     /**
      * Read value stored in cache by assosiated key.
      * @param {*} key - cache record's key
