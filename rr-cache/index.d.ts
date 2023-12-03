@@ -1,27 +1,5 @@
-type TStats = {
-    size: number;
-    capacity: number;
-    locked: boolean;
-    hitRatio: number;
-};
-interface IRRCache {
-    get stats(): TStats;
-    set lock(state: boolean);
-    read: (key: any) => any;
-    add: (key: any, value: any) => void;
-    has: (key: any) => boolean;
-    remove: (key: any) => void;
-    clear: () => void;
-}
-type TConfigOptions = {
-    /**
-     * Capacity means how many items can be stored at the same time in cache.
-     * For RR cache, by definition, capacity is a required restriction,
-     * without it becomes almost meaningless, so this option is mandatory.
-     */
-    capacity: number;
-};
-declare class RRCache implements IRRCache {
+import { TConfigOptions, ICache } from '../libs/types.js';
+declare class RRCache implements ICache {
     #private;
     constructor(options: TConfigOptions);
     get stats(): {
