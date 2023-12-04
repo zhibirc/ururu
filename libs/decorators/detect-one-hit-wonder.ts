@@ -1,9 +1,4 @@
 /**
- * Cache method decorators.
- * Designed to be used to extend cache capabilities.
- */
-
-/**
  * Detect one-hit-wonder objects.
  */
 const detectOneHitWonder = (() => {
@@ -31,17 +26,5 @@ const detectOneHitWonder = (() => {
     }
 })();
 
-function log() {
-    return function (originalMethod: any, _context: ClassMethodDecoratorContext) {
-        function replacementMethod(this: any, key: any, value: any) {
-            // @todo: implement
-        }
 
-        return replacementMethod;
-    };
-}
-
-
-export {
-    detectOneHitWonder
-};
+export default detectOneHitWonder;

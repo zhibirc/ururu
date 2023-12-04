@@ -38,3 +38,10 @@ If in general it's usually true, this is very subjective if applied to implement
 ## General Theory
 
 When the cache becomes full, a cache block or record/entry must be evicted to make room for a new block. The replacement policy determines which block to evict.
+
+Various cache implementations can have slightly different public APIs, however most of them are very consistent in their core capabilities. In the list below there are typical extra features (or just their naming) which can be found in known realisations:
+
+| Member | Type | Description                                                                         |
+|--------|------|-------------------------------------------------------------------------------------|
+|`setpop`|method|Sets a value for the given key, but besides that returns evicted object or old value.|
+|`peek`  |method|Retrieves the value associated with the given key, doesn't update access information.|

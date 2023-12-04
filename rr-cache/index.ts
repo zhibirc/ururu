@@ -1,4 +1,4 @@
-import { TConfigOptions, ICache } from '../libs/types.js';
+import { ICache } from '../libs/types.js';
 
 class RRCache implements ICache {
     #hits: number;
@@ -9,9 +9,7 @@ class RRCache implements ICache {
     #freeSlots: Array<number>;
     #store;
 
-    constructor ( options: TConfigOptions ) {
-        const { capacity } = options;
-
+    constructor ( capacity: number ) {
         if (!Number.isInteger(capacity) || capacity <= 0) throw new Error('invalid "capacity": positive integer expected');
 
         this.#hits = 0;
