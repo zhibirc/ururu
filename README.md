@@ -39,9 +39,15 @@ If in general it's usually true, this is very subjective if applied to implement
 
 When the cache becomes full, a cache block or record/entry must be evicted to make room for a new block. The replacement policy determines which block to evict.
 
-Various cache implementations can have slightly different public APIs, however most of them are very consistent in their core capabilities. In the list below there are typical extra features (or just their naming) which can be found in known realisations:
+Various cache implementations can have slightly different public APIs, however most of them are very consistent in their core capabilities. In the list below there are typical extra features which can be found in known cache realisations (as part of their public API):
 
-| Member | Type | Description                                                                         |
-|--------|------|-------------------------------------------------------------------------------------|
-|`setpop`|method|Sets a value for the given key, but besides that returns evicted object or old value.|
-|`peek`  |method|Retrieves the value associated with the given key, doesn't update access information.|
+| Member  | Type   | Description                                                                         |
+|---------|--------|-------------------------------------------------------------------------------------|
+|`size`   |property|Number of entries/items/records actually stored in cache ($size <= capacity$).       |
+|`from`   |static  |Instantiate cache with data (usually key-value structure).                           |
+|`setpop` |method  |Sets a value for the given key, but besides that returns evicted object or old value.|
+|`peek`   |method  |Retrieves the value associated with the given key, doesn't update access information.|
+|`forEach`|method  |Convenient helper methods implementing the ability to iterate on cache data.         |
+|`keys`   |method  |                                                                                     |
+|`values` |method  |                                                                                     |
+|`entries`|method  |                                                                                     |
