@@ -10,7 +10,9 @@ class RRCache implements ICache {
     #store;
 
     constructor ( capacity: number ) {
-        if (!Number.isInteger(capacity) || capacity <= 0) throw new Error('invalid "capacity": positive integer expected');
+        if (!Number.isInteger(capacity) || capacity <= 0) {
+            throw new Error('invalid "capacity": positive integer expected');
+        }
 
         this.#hits = 0;
         this.#misses = 0;
@@ -31,13 +33,13 @@ class RRCache implements ICache {
     }
 
     set lock (state: boolean) {
-        this.#locked = state;
+        this.#locked = Boolean(state);
     }
 
     /**
      * Read value stored in cache by assosiated key.
      * @param {*} key - cache record's key
-     * @return {*|null} record's value retrieved by key or null if record is absent
+     * @return {*|void} record's value retrieved by key or null if record is absent
      */
     read (key: any) {
         if (this.#store.has(key)) {
@@ -46,7 +48,6 @@ class RRCache implements ICache {
         }
 
         this.#misses += 1;
-        return null;
     }
 
     add (key: any, value: any) {
@@ -93,10 +94,11 @@ class RRCache implements ICache {
     }
 
     /**
-     * Remove all items from the cache.
+     * Remove all items from the cache and clear internal structures.
      * @return {void}
      */
     clear () {
+        this.#hits = this.#misses = 0;
         this.#keys.length = this.#freeSlots.length = 0;
         this.#keys.length = this.#capacity;
         this.#store.clear();

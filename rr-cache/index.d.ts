@@ -1,7 +1,7 @@
-import { TConfigOptions, ICache } from '../libs/types.js';
+import { ICache } from '../libs/types.js';
 declare class RRCache implements ICache {
     #private;
-    constructor(options: TConfigOptions);
+    constructor(capacity: number);
     get stats(): {
         size: number;
         capacity: number;

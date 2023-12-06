@@ -6,10 +6,10 @@ class RRCache {
     #keys;
     #freeSlots;
     #store;
-    constructor(options) {
-        const { capacity } = options;
-        if (!Number.isInteger(capacity) || capacity <= 0)
+    constructor(capacity) {
+        if (!Number.isInteger(capacity) || capacity <= 0) {
             throw new Error('invalid "capacity": positive integer expected');
+        }
         this.#hits = 0;
         this.#misses = 0;
         this.#capacity = capacity;
