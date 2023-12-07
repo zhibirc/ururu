@@ -11,6 +11,11 @@
 
 ---
 
+## Table of Contents
+
+[First-In-First-Out (FIFO) Cache](./fifo-cache/)
+[Random Replacement (RR) Cache](./rr-cache/)
+
 ## Motivation
 
 Yet another cache implementations. But why? Yeah, there are a few reasons for that.

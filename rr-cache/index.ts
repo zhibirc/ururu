@@ -39,7 +39,7 @@ class RRCache implements ICache {
     /**
      * Read value stored in cache by assosiated key.
      * @param {*} key - cache record's key
-     * @return {*|void} record's value retrieved by key or null if record is absent
+     * @return {*|void} record's value retrieved by key or undefined if record is absent
      */
     read (key: any) {
         if (this.#store.has(key)) {
