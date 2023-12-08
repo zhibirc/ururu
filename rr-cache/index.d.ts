@@ -12,7 +12,7 @@ declare class RRCache implements ICache {
     /**
      * Read value stored in cache by assosiated key.
      * @param {*} key - cache record's key
-     * @return {*|null} record's value retrieved by key or null if record is absent
+     * @return {*|void} record's value retrieved by key or undefined if record is absent
      */
     read(key: any): any;
     add(key: any, value: any): void;
@@ -29,7 +29,7 @@ declare class RRCache implements ICache {
      */
     remove(key: any): void;
     /**
-     * Remove all items from the cache.
+     * Remove all items from the cache and clear internal structures.
      * @return {void}
      */
     clear(): void;

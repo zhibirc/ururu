@@ -13,8 +13,9 @@
 
 ## Table of Contents
 
-[First-In-First-Out (FIFO) Cache](./fifo-cache/)
-[Random Replacement (RR) Cache](./rr-cache/)
+🐢 [First-In-First-Out (FIFO) Cache](./fifo-cache/)
+
+🐝 [Random Replacement (RR) Cache](./rr-cache/)
 
 ## Motivation
 

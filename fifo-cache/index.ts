@@ -34,10 +34,12 @@ class FifoCache implements ICache {
         this.#capacity = capacity;
         this.#locked = false;
 
-        // store is a Singly Linked List to support fast add (to tail) and delete (from head) records
+        // store is a Doubly Linked List to support fast add (to tail) and delete (from head) records,
+        // as well as effective deletion
         this.#head = null;
         this.#tail = null;
-        // struct for fast access to cache records, use as <key:reference> lookup table
+        // struct for fast access to cache records, use as <key:node> lookup table
+        // to compensate O(N) bottleneck to search node in such list
         this.#map = new Map();
     }
 
@@ -114,10 +116,17 @@ class FifoCache implements ICache {
         if (this.#map.has(key)) {
             const node = this.#map.get(key);
 
-            node.prev.next = node.next;
-            node.next.prev = node.prev;
-            node.next = null;
-            node.prev = null;
+            if (node === this.#head) {
+                this.#head = node.next;
+                this.#head.prev = null;
+            } else if (node === this.#tail) {
+                this.#tail = node.prev;
+                this.#tail.next = null;
+            } else {
+                node.prev.next = node.next;
+                node.next.prev = node.prev;
+            }
+            
             this.#map.delete(key);
         }
     }

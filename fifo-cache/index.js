@@ -1,65 +1,115 @@
-;
-const Node = (data, next) => ({ data, next });
+const Node = (data, next = null, prev = null) => ({ data, next, prev });
 class FifoCache {
+    #hits;
+    #misses;
     #capacity;
-    #store;
+    #locked;
+    #head;
+    #tail;
     #map;
-    constructor(options) {
-        const { capacity } = options;
-        if (!Number.isInteger(capacity) || capacity <= 0)
+    constructor(capacity) {
+        if (!Number.isInteger(capacity) || capacity <= 0) {
             throw new Error('invalid "capacity": positive integer expected');
+        }
+        this.#hits = 0;
+        this.#misses = 0;
         this.#capacity = capacity;
-        // Store is a Singly linked list to support fast add (to tail) and delete (from head) records.
-        this.#store = { head: null, tail: null };
-        // Struct for fast access to cache records, use as <key:reference> lookup table.
+        this.#locked = false;
+        // store is a Doubly Linked List to support fast add (to tail) and delete (from head) records,
+        // as well as effective deletion
+        this.#head = null;
+        this.#tail = null;
+        // struct for fast access to cache records, use as <key:node> lookup table
+        // to compensate O(N) bottleneck to search node in such list
         this.#map = new Map();
     }
-    get size() {
-        return this.#map.size;
+    get stats() {
+        return {
+            size: this.#map.size,
+            capacity: this.#capacity,
+            locked: this.#locked,
+            hitRatio: this.#hits / (this.#hits + this.#misses)
+        };
     }
-    set capacity(value) {
-        if (!Number.isInteger(value) || value <= 0)
-            throw new Error('invalid "capacity": positive integer expected');
-        if (value < this.#capacity) {
-            // @todo: implement
-        }
-        this.#capacity = value;
+    set lock(state) {
+        this.#locked = Boolean(state);
     }
+    /**
+     * Read value stored in cache by assosiated key.
+     * @param {*} key - cache record's key
+     * @return {*|void} record's value retrieved by key or undefined if record is absent
+     */
     read(key) {
         if (this.#map.has(key)) {
-            return this.#map.get(key)?.data.value;
+            this.#hits += 1;
+            return this.#map.get(key).data.value;
         }
-        return null;
+        this.#misses += 1;
     }
-    store(key, value) {
+    add(key, value) {
         // check if cache capacity limit is reached
         if (this.#map.size === this.#capacity) {
             // evict head since we are out of capacity
-            const node = this.#store.head;
-            this.#store.head = node.next;
-            this.#map.delete(node.data.key);
-            node.next = null;
+            const head = this.#head;
+            this.#head = head.next;
+            head.next = null;
+            this.#head.prev = null;
+            this.#map.delete(head.data.key);
         }
         const node = Node({ key, value });
         if (this.#map.size === 0) {
-            this.#store.head = node;
+            this.#head = node;
         }
         else if (this.#map.size === 1) {
-            this.#store.tail = node;
-            this.#store.head.next = this.#store.tail;
+            this.#tail = node;
+            this.#head.next = this.#tail;
+            this.#tail.prev = this.#head;
         }
         else {
-            this.#store.tail.next = node;
-            this.#store.tail = node;
+            this.#tail.next = node;
+            node.prev = this.#tail;
+            this.#tail = node;
         }
         this.#map.set(key, node);
     }
+    /**
+     * Check if record by given key exists in cache.
+     * @param {*} key - cache record's key
+     * @return {boolean} return true if record is in the cache
+     */
     has(key) {
         return this.#map.has(key);
     }
+    /**
+     * Remove an item from the cache.
+     * @param {*} key - cache record's key
+     * @return {void}
+     */
+    remove(key) {
+        if (this.#map.has(key)) {
+            const node = this.#map.get(key);
+            if (node === this.#head) {
+                this.#head = node.next;
+                this.#head.prev = null;
+            }
+            else if (node === this.#tail) {
+                this.#tail = node.prev;
+                this.#tail.next = null;
+            }
+            else {
+                node.prev.next = node.next;
+                node.next.prev = node.prev;
+            }
+            this.#map.delete(key);
+        }
+    }
+    /**
+     * Remove all items from the cache and clear internal structures.
+     * @return {void}
+     */
     clear() {
-        this.#store.head = null;
-        this.#store.tail = null;
+        this.#hits = this.#misses = 0;
+        this.#head = this.#tail = null;
         this.#map.clear();
     }
 }
