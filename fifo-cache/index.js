@@ -47,6 +47,8 @@ class FifoCache {
         this.#misses += 1;
     }
     add(key, value) {
+        if (this.#locked)
+            return;
         // check if cache capacity limit is reached
         if (this.#map.size === this.#capacity) {
             // evict head since we are out of capacity

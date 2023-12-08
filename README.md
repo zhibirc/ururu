@@ -17,6 +17,9 @@
 
 🐝 [Random Replacement (RR) Cache](./rr-cache/)
 
+> [!TIP]
+> Code is ready for copy-paste. Use plain TS files or JS + type annotations, whatever you need.
+
 ## Motivation
 
 Yet another cache implementations. But why? Yeah, there are a few reasons for that.

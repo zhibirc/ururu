@@ -71,6 +71,8 @@ class FifoCache implements ICache {
     }
 
     add (key: any, value: any) {
+        if (this.#locked) return;
+
         // check if cache capacity limit is reached
         if (this.#map.size === this.#capacity) {
             // evict head since we are out of capacity
