@@ -1,3 +1,4 @@
+import os from 'node:os';
 import { ICache } from '../libs/types.js';
 
 type TNode = {
@@ -5,7 +6,9 @@ type TNode = {
         key: any,
         value: any
     };
+    // reference to the next node
     next: TNode | null;
+    // reference to the previous node
     prev: TNode | null;
 };
 
@@ -36,8 +39,12 @@ class FifoCache implements ICache {
 
         // store is a Doubly Linked List to support fast add (to tail) and delete (from head) records,
         // as well as effective deletion
+
+        // points to first node (head) of the list
         this.#head = null;
+        // points to last node (tail) of the list
         this.#tail = null;
+
         // struct for fast access to cache records, use as <key:node> lookup table
         // to compensate O(N) bottleneck to search node in such list
         this.#map = new Map();
@@ -48,7 +55,11 @@ class FifoCache implements ICache {
             size: this.#map.size,
             capacity: this.#capacity,
             locked: this.#locked,
-            hitRatio: this.#hits / (this.#hits + this.#misses)
+            hitRatio: this.#hits / (this.#hits + this.#misses),
+            memoryUsage: {
+                freeTotalRatio: Math.round(os.freemem() / os.totalmem() * 100) / 100,
+                ...process.memoryUsage()
+            }
         };
     }
 
@@ -76,21 +87,21 @@ class FifoCache implements ICache {
         // check if cache capacity limit is reached
         if (this.#map.size === this.#capacity) {
             // evict head since we are out of capacity
-            const head = this.#head;
-            this.#head = head.next;
-            head.next = null;
-            this.#head.prev = null;
-            this.#map.delete(head.data.key);
+            this.#map.delete(this.#head.data.key);
+            this.#head = this.#head.next;
+            if (this.#head) {
+                this.#head.prev = null;
+            }
         }
         
         const node: TNode = Node({key, value});
 
-        if (this.#map.size === 0) {
+        if (this.#head === null) {
             this.#head = node;
-        } else if (this.#map.size === 1) {
+        } else if (this.#tail === null) {
             this.#tail = node;
-            this.#head.next = this.#tail;
-            this.#tail.prev = this.#head;
+            this.#head.next = node;
+            node.prev = this.#head;
         } else {
             this.#tail.next = node;
             node.prev = this.#tail;

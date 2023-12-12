@@ -7,6 +7,14 @@ declare class RRCache implements ICache {
         capacity: number;
         locked: boolean;
         hitRatio: number;
+        memoryUsage: {
+            rss: number;
+            heapTotal: number;
+            heapUsed: number;
+            external: number;
+            arrayBuffers: number;
+            freeTotalRatio: number;
+        };
     };
     set lock(state: boolean);
     /**

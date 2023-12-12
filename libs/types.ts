@@ -7,6 +7,8 @@ type TStats = {
     locked: boolean;
     // measures how effective a cache is at fulfilling requests
     hitRatio: number;
+    // object describing the memory usage of the process
+    memoryUsage: Record<string, number>;
     // @todo: may contain other props like cache misses, etc.
 }
 

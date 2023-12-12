@@ -1,3 +1,4 @@
+import os from 'node:os';
 class RRCache {
     #hits;
     #misses;
@@ -23,7 +24,11 @@ class RRCache {
             size: this.#store.size,
             capacity: this.#capacity,
             locked: this.#locked,
-            hitRatio: this.#hits / (this.#hits + this.#misses)
+            hitRatio: this.#hits / (this.#hits + this.#misses),
+            memoryUsage: {
+                freeTotalRatio: Math.round(os.freemem() / os.totalmem() * 100) / 100,
+                ...process.memoryUsage()
+            }
         };
     }
     set lock(state) {
