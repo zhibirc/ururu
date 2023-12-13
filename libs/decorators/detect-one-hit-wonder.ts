@@ -1,15 +1,36 @@
 /**
  * Detect one-hit-wonder objects.
  */
-const detectOneHitWonder = (() => {
-    const hitCount = new Map();
 
-    return (threshold: number = 1) => {
+import BloomFilter from '../filters/bloom';
+import CuckooFilter from '../filters/cuckoo';
+
+const TYPE_FILTER_MAP = Symbol('TYPE_FILTER_MAP');
+const TYPE_FILTER_BLOOM = Symbol('TYPE_FILTER_BLOOM');
+const TYPE_FILTER_CUCKOO = Symbol('TYPE_FILTER_CUCKOO');
+
+const detectOneHitWonder = (() => {
+    let filter;
+
+    return (threshold: number = 1, filterType: symbol = TYPE_FILTER_MAP) => {
         return function (originalMethod: any, _context: ClassMethodDecoratorContext) {
             function replacementMethod(this: any, key: any, value?: any) {
-                let n = hitCount.get(key) ?? 0;
+                const { capacity } = this.stats;
+
+                switch (filterType) {
+                    case TYPE_FILTER_MAP:
+                        filter = new Map();
+                        break;
+                    case TYPE_FILTER_BLOOM:
+                        filter = new BloomFilter(capacity);
+                        break;
+                    case TYPE_FILTER_CUCKOO:
+                        filter = new CuckooFilter(capacity);
+                        break;
+                }
+                let n = filter.get(key) ?? 0;
     
-                hitCount.set(key, ++n);
+                filter.set(key, ++n);
     
                 switch (originalMethod.name) {
                     case 'read':
@@ -27,4 +48,9 @@ const detectOneHitWonder = (() => {
 })();
 
 
+export {
+    TYPE_FILTER_MAP,
+    TYPE_FILTER_BLOOM,
+    TYPE_FILTER_CUCKOO
+};
 export default detectOneHitWonder;
