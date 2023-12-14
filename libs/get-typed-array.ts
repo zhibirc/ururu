@@ -11,7 +11,7 @@ function getTypedArray (n: number) {
         case n - 1 <= MAX_32BIT_UINT:
             return new Uint32Array(n);
         default:
-            return new Array(n);
+            return new Float64Array(n);
     }
 }
 

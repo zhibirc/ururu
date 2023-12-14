@@ -12,32 +12,34 @@ const TYPE_FILTER_CUCKOO = Symbol('TYPE_FILTER_CUCKOO');
 const detectOneHitWonder = (() => {
     let filter;
 
-    return (threshold: number = 1, filterType: symbol = TYPE_FILTER_MAP) => {
+    return (filterType: symbol = TYPE_FILTER_MAP) => {
         return function (originalMethod: any, _context: ClassMethodDecoratorContext) {
             function replacementMethod(this: any, key: any, value?: any) {
-                const { capacity } = this.stats;
+                if (!filter) {
+                    const { capacity } = this.stats;
 
-                switch (filterType) {
-                    case TYPE_FILTER_MAP:
-                        filter = new Map();
-                        break;
-                    case TYPE_FILTER_BLOOM:
-                        filter = new BloomFilter(capacity);
-                        break;
-                    case TYPE_FILTER_CUCKOO:
-                        filter = new CuckooFilter(capacity);
-                        break;
+                    switch (filterType) {
+                        case TYPE_FILTER_MAP:
+                            filter = new Map();
+                            break;
+                        case TYPE_FILTER_BLOOM:
+                            filter = new BloomFilter(capacity);
+                            break;
+                        case TYPE_FILTER_CUCKOO:
+                            filter = new CuckooFilter(capacity);
+                            break;
+                    }
                 }
-                let n = filter.get(key) ?? 0;
-    
-                filter.set(key, ++n);
     
                 switch (originalMethod.name) {
                     case 'read':
+                        filter.set(key, 1);
                         return originalMethod.call(this, key);
                     case 'add':
-                        if (n > threshold) {
+                        if (filter.get(key)) {
                             return originalMethod.call(this, key, value);
+                        } else {
+                            filter.set(key, 1);
                         }
                 }
             }
